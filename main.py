@@ -8,7 +8,7 @@ import bot
 
 
 class LLMBot(discord.Client):
-    def __init__(self, file_path):
+    def __init__(self, file_path: str):
         self.bot = bot.Bot(file_path)
 
         intents = discord.Intents.default()
@@ -26,7 +26,7 @@ class LLMBot(discord.Client):
 
         print(f'Logged in as {self.user} (ID: {self.user.id})')
 
-    async def on_message(self, message): 
+    async def on_message(self, message: discord.Message): 
         if type(message.channel) != discord.channel.DMChannel:
             return
 
@@ -46,4 +46,4 @@ if __name__ == '__main__':
         exit()
 
     client = LLMBot(sys.argv[1])
-    client.run(os.getenv('DISCORD_KEY'))
+    client.run(os.getenv('DISCORD_KEY', ''))
