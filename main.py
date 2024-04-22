@@ -4,12 +4,13 @@ import os
 import discord
 import dotenv
 
-import bot
+from bot.bot import Bot
+from client.completion import CompletionClient
 
 
 class LLMBot(discord.Client):
-    def __init__(self, file_path: str):
-        self.bot = bot.Bot(file_path)
+    def __init__(self, file_path: str, completion_client: CompletionClient):
+        self.bot = Bot(file_path, completion_client)
 
         intents = discord.Intents.default()
         intents.message_content = True
@@ -45,5 +46,6 @@ if __name__ == '__main__':
         print("please pass character json file")
         exit()
 
-    client = LLMBot(sys.argv[1])
+    completion_client = CompletionClient(os.getenv('COMPLETIONS_MODEL', 'gpt-4'), os.getenv('OPEN_AI_BASE_URL'))
+    client = LLMBot(sys.argv[1], completion_client)
     client.run(os.getenv('DISCORD_KEY', ''))
