@@ -1,11 +1,6 @@
-import os
 import json
 import datetime
 from typing import List, Dict
-from dataclasses import dataclass
-
-import openai
-import httpx
 
 from bot.dialog import Dialog
 from client.completion import CompletionClient, BASE_TOKENS, PER_MESSAGE_TOKENS
@@ -50,6 +45,6 @@ class Bot:
             mins_ago = last_message_delta.seconds / 60.0
             messages.append({'role': 'system', 'content': f"The last time {self.name} and {user_nick} spoke was {mins_ago} minutes ago"})
         
-        current_token_count = BASE_TOKENS + sum([self.client.get_token_length(msg['content']) for msg in messages]) + PER_MESSAGE_TOKENS
+        current_token_count = BASE_TOKENS + sum([self.client.get_token_length(msg['content']) + PER_MESSAGE_TOKENS for msg in messages])
         messages += dialog.get_truncated_messages(self.client.max_tokens - current_token_count)
         return messages
