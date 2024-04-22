@@ -8,6 +8,7 @@ import openai
 import httpx
 
 
+# TODO: can we pull this from the API?
 BASE_TOKENS = 1
 PER_MESSAGE_TOKENS = 4
 CONTEXT_LENGTH = 8000
@@ -29,20 +30,20 @@ class Dialog:
     def get_chat_log(self, bot, user_nick: str):
         # initial prompt
         log = [
-            {'role': 'system', 'content': f"Write {bot.name}'s next reply in a fictional chat between {bot.name} and {user_nick}. Write 1 reply only in internet RP style, avoid quotation marks. Be proactive, creative, and drive the plot and conversation forward. Always stay in character and avoid repetition. The chat is taking place on Discord."},
-            {'role': 'system', 'content': f"[{bot.name} is {user_nick}'s Discord friend. The setting is the real world, no magical or fantasy elements.]"},
-            {'role': 'system', 'content': f"[{bot.name}'s personality: {bot.personality}]"},
-            {'role': 'system', 'content': '[ALWAYS STAY IN CHARACTER]'},
+            {'role': 'system', 'content': f"Write {bot.name}'s next reply in a fictional chat between {bot.name} and {user_nick}. Write 1 reply only in internet RP style, avoid quotation marks. Be proactive, creative, and drive the plot and conversation forward. Always stay in character and avoid repetition. The chat is taking place on Discord in a direct message."},
+            {'role': 'system', 'content': f"{bot.name} is {user_nick}'s Discord friend. The setting is the real world, no magical or fantasy elements."},
+            {'role': 'system', 'content': f"{bot.name}'s personality: {bot.personality}"},
+            {'role': 'system', 'content': 'Always stay in character.'},
         ]
         
         # first time vs recent chat system messages
         # TODO: condition on memories existing instead of log length
         if len(self.rest_of_log) < 2:
-            log.append({'role': 'system', 'content': f"[This is the first time {bot.name} and {user_nick} have ever spoken.]"})
+            log.append({'role': 'system', 'content': f"This is the first time {bot.name} and {user_nick} have ever spoken. Introduce yourself and try to learn more about {user_nick}."})
         else:
             last_message_delta = datetime.datetime.now() - self.rest_of_log[-2].time
             mins_ago = last_message_delta.seconds / 60.0
-            log.append({'role': 'system', 'content': f"[The last time {bot.name} and {user_nick} spoke was {mins_ago} minutes ago]"})
+            log.append({'role': 'system', 'content': f"The last time {bot.name} and {user_nick} spoke was {mins_ago} minutes ago"})
 
         # only append the last N messages to fill up the context window, don't over over token limit
         # TODO: no need to recompute this every time... just here for flexibility
