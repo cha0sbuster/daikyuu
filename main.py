@@ -1,5 +1,8 @@
 import sys
 import os
+import logging
+import random
+import asyncio
 
 import discord
 import dotenv
@@ -34,6 +37,10 @@ class LLMBot(discord.Client):
         if message.author.id == self.user.id:
             return
 
+        # natural pause before replying, as if reading, scaled on message length
+        pause_secs = random.uniform(1, 1 + 10 * (len(message.content) / 1000))
+        await asyncio.sleep(pause_secs)
+
         async with message.channel.typing():
             res = self.bot.resolve_chat(message.author.name, message.author.global_name, message.content)
             await message.channel.send(res)
@@ -45,6 +52,8 @@ if __name__ == '__main__':
     if len(sys.argv) < 2:
         print("please pass character json file")
         exit()
+
+    logging.basicConfig(level=logging.INFO)
 
     completion_client = CompletionClient(os.getenv('COMPLETIONS_MODEL', 'gpt-4'), os.getenv('OPEN_AI_BASE_URL'))
     client = LLMBot(sys.argv[1], completion_client)
