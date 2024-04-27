@@ -3,6 +3,7 @@ import datetime
 from typing import List, Dict
 
 from bot.dialog import Dialog
+from bot.memory import load_memory, save_memory
 from client.completion import CompletionClient, BASE_TOKENS, PER_MESSAGE_TOKENS
 
 
@@ -15,17 +16,18 @@ class Bot:
         self.personality: str = bot_data.get('personality', 'A helpful assistant')
 
         self.client = client
-
-        self.dialogs: Dict[str, Dialog] = {} # map username -> Dialog objects
+        self.dialogs: Dict[str, Dialog] = load_memory(self.name) # map username -> Dialog objects
     
     def resolve_chat(self, username: str, user_nick: str, user_text: str) -> str:
         if username not in self.dialogs:
             self.dialogs[username] = Dialog()
-        dialog = self.dialogs[username] 
+        dialog = self.dialogs[username]
 
         dialog.append_user_chat(user_text, self.client.get_token_length(user_text) + PER_MESSAGE_TOKENS)
         bot_text = self.client.get_completion(self.get_messages(dialog, user_nick))
         dialog.append_bot_chat(bot_text, self.client.get_token_length(bot_text) + PER_MESSAGE_TOKENS)
+
+        save_memory(self.name, self.dialogs)
         return bot_text
 
     def get_messages(self, dialog: Dialog, user_nick: str) -> List[Dict[str, str]]:
