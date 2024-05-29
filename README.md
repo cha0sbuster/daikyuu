@@ -8,7 +8,7 @@
  long term ("i would have to learn how to do this"):
  - multiple characters at once via webhooks (this might be what ravens means by "async engagement" tho idk)
  - multimodal?????? maybe????
- - 
+ - a
 
 ## setup
 ```
