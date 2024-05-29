@@ -1,6 +1,8 @@
 # daikyuu
  fork of ravens' [yumi.](https://github.com/ravens2d/yumi) ravens has different goals from me, but yumi is a personal project, so i wasn't about to burden them with my requests. (that's what forks are for, right? /gen)
 
+basically talOS and character engine are like **right there** but also way too overbuilt for me to try and finish so. uh. yeah
+
  short term ("i can do this without learning anything new"):
  - port to ollama or kobold.cpp
  - break out generation params into config file (might just use .env tbh, it's there)
